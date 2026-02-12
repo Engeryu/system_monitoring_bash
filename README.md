@@ -51,7 +51,7 @@ chmod +x my_sysinfo_v2.sh
 
 ### Option A: Interactive Mode (The Legacy Way)
 
-Perfect for beginners
+Perfect for SysAdmins & beginners
 ```bash
 ./my_sysinfo_v2.sh -i
 # or simply
