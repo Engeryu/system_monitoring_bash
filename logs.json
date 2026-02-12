@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-02-12T14:40:45Z",
+  "hostname": "engeryuomen",
+  "system": {
+"cpu_model": "Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz", "cpu_cores": 12
+  },
+  "memory": {
+"ram_total_mb": 15931, "ram_used_mb": 313, "ram_free_mb": 15163
+  },
+  "storage": {
+"disk_root_usage_percent": 1, "disk_root_total": "1007G"
+  },
+  "network": {
+"ip_address": "10.255.255.254", "gateway": "172.25.208.1"
+  }
+}

@@ -1,7 +1,7 @@
 #!/bin/bash
 # ====================================================
 # @Author: Engeryu
-# @Version: 2.0.0 (Architect Edition)
+# @Version: 2.0.0 (Definitive Edition)
 # Description: Modern System Information Tool.
 #              Supports Interactive Menu AND JSON Output for Monitoring.
 # ====================================================
