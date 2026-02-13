@@ -1,119 +1,149 @@
-# 🖥️ System Information Toolkit (Bash) v2.0
+# 🖥️ SysInfo - Production Ready System Monitor
 
-> **Architect Edition:** A modern, hybrid system analysis tool capable of both interactive exploration and automated JSON metrics collection.
+> **A robust, modular, and dependency-free system monitoring tool written in Bash.**
+> Designed for **SysAdmins** (Interactive Dashboard) and **DevOps** (JSON Automation & Health Checks).
 
 ![Bash](https://img.shields.io/badge/Language-Bash-4EAA25?style=flat-square&logo=gnu-bash&logoColor=white)
-![Version](https://img.shields.io/badge/Version-2.0.0-blue?style=flat-square)
+![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20WSL-blue?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)
 
----
+## 🌟 Key Features
 
-## 🚀 Features & Evolution
+* **📊 Interactive Dashboard:** Rich visual output with progress bars, color-coded statuses, and auto-refreshing metrics.
+* **🧠 Smart Disk Filtering:** Automatically detects and displays relevant storage:
+    * Root (`/`) & System (`/home`, `/usr`)
+    * External Media (`/media/*`, `/mnt/usb`...)
+    * Windows Drives (WSL: `/mnt/c`, `/mnt/d`...)
+    * Docker Volumes
+    * *Ignores system noise (tmpfs, loops, WSL internal mounts).*
+* **🤖 DevOps Ready (JSON):** Generates clean, parsed JSON output for ingestion by monitoring stacks (ELK, Datadog, Zabbix).
+* **🏥 Health Checks:** Integrated alerting system returning exit codes (`0`/`1`) for CI/CD pipelines or cron jobs.
+* **🐳 Docker Support:** Auto-detects running containers and stats.
 
-This project has evolved from a simple administration script (2018) to a robust system monitoring agent (2025+). It now supports two distinct modes of operation:
+## 📦 Installation
 
-### 1. 🛠️ Interactive Admin Mode (Legacy)
-Designed for manual system checks and exploration via a user-friendly menu.
-- **Hardware:** CPU model/cores, RAM usage, Disk partition stats.
-- **Network:** IP configuration, Gateway, Open ports (via `ss`).
-- **Process:** Real-time monitoring via `top`.
-
-### 2. 🤖 DevOps Automation Mode (New in v2.0)
-Designed for monitoring pipelines, logging, and API integration.
-- **JSON Output:** Generates machine-readable system metrics.
-- **Pipeline Ready:** Can be piped into `jq`, log files, or monitoring dashboards.
-- **Non-Interactive:** Runs silently without user input.
-
----
-
-## 🛠️ Requirements
-
-The script uses standard Linux utilities. For full functionality, ensure the following packages are installed:
-
-- **Core:** `bash`, `awk`, `grep`, `sed`
-- **Network:** `ip` (iproute2), `ss` (iproute2)
-- **Hardware:** `lscpu`, `free`, `df`
-
-> **Note:** Legacy dependencies like `netstat` and `nslookup` have been replaced by modern alternatives (`ss`, `ip`) in v2.0.
-
----
-
-## 📦 Installation & Usage
+No installation required. Zero external dependencies (uses standard tools: `df`, `awk`, `grep`, `ps`, `free`).
 
 ```bash
 # 1. Clone the repository
-git clone [https://github.com/Engeryu/My_Sysinfo_Bash.git](https://github.com/Engeryu/My_Sysinfo_Bash.git)
-cd My_Sysinfo_Bash
+git clone [https://github.com/yourusername/sysinfo.git](https://github.com/yourusername/sysinfo.git)
+cd sysinfo
 
 # 2. Make executable
-chmod +x my_sysinfo_v2.sh
+chmod +x sysinfo.sh
+
+# 3. Run
+./sysinfo.sh
+````
+
+## 🛠️ Usage Scenarios
+
+### 1\. The SysAdmin Check (Dashboard)
+
+Simply run the script to see the visual report. Ideal for login messages (`.bashrc`) or manual checks.
+
+Bash
+
+```
+./sysinfo.sh
 ```
 
-### Option A: Interactive Mode (The Legacy Way)
+_Displays: OS Info, CPU Load, RAM, Disk Usage (Smart Filtered), Network, Docker, Top Processes._
 
-Perfect for SysAdmins & beginners
-```bash
-./my_sysinfo_v2.sh -i
-# or simply
-./my_sysinfo_v2.sh
+### 2\. The DevOps Export (JSON)
+
+Export full system metrics to a monitoring tool or API.
+
+Bash
+
+```
+./sysinfo.sh --json > metrics.json
 ```
 
-Preview:
+_Output is strictly formatted JSON, ready for parsing._
 
-```bash
-=======================================
- SysInfo V2 - Main Menu
-=======================================
-1) Hardware Stats
-2) Network Stats
-3) Process Management
-4) Generate JSON Report (New)
-5) Exit
+### 3\. The Health Check (Alerting)
+
+Use this in cron jobs or CI pipelines. It checks CPU (>85%), RAM (>90%), and Disk (>90%).
+
+-   **Returns Exit Code 0:** System Healthy.
+-   **Returns Exit Code 1:** Critical Threshold Exceeded.
+
+Bash
+
+```
+if ./sysinfo.sh --check; then
+    echo "✅ System Green"
+else
+    echo "❌ CRITICAL ALERT: Check logs!"
+    # Trigger email or Slack webhook here
+fi
 ```
 
-### Option B: DevOps Mode (The Modern Way)
+### 4\. The Archivist (Logging)
 
-Perfect for cron jobs, logging or passing data to other tools
-```bash
-# Output raw JSON to console
-./my_sysinfo_v2.sh --json
+Save the report to a log file (automatically strips ANSI colors for readability).
 
-# Example: Save state to log file
-./my_sysinfo_v2.sh --json >> /var/log/sysinfo.json
+Bash
 
-# Example: Extract specific metric (requires jq)
-./my_sysinfo_v2.sh --json | jq '.memory.ram_used_mb'
+```
+./sysinfo.sh --log
+# Output appended to ~/sysinfo.log
 ```
 
-JSON Output Example:
+### 5\. Modular Execution
 
-```bash
-{
-  "timestamp": "2026-02-12T10:30:00Z",
-  "hostname": "production-server-01",
-  "system": {
-    "cpu_model": "AMD Ryzen 7 5800X",
-    "cpu_cores": 16
-  },
-  "memory": {
-    "ram_total_mb": 32000,
-    "ram_used_mb": 14500,
-    "ram_free_mb": 17500
-  },
-  "storage": {
-    "disk_root_usage_percent": 45,
-    "disk_root_total": "500G"
-  }
-}
+Only need specific info? Use flags to run specific modules.
+
+Bash
+
+```
+./sysinfo.sh --cpu --mem --disk
 ```
 
----
+## 🔌 External Storage (WSL Specifics)
 
-## 🤝 Contributions
+This tool is optimized for **WSL (Windows Subsystem for Linux)**. It automatically filters out WSL internal mounts to show you what matters.
 
-Contributions are welcome ! Whether it's adding new metrics to the JSON output
-or optimizing the bash logic, feel free to fork and submit a PR.
+## ⚙️ Configuration
 
----
+You can adjust the alert thresholds directly in the script header:
 
-*Authored by Engeryu - 2018-2026*
+Bash
+
+```
+# Thresholds for Alerts (Percentage)
+LIMIT_CPU=85
+LIMIT_MEM=90
+LIMIT_DISK=90
+```
+
+## 📝 Command Reference
+
+| Flag | Description |
+| --- | --- |
+| `--help` | Show available commands |
+| `--json` | Output in JSON format (Full Data) |
+| `--check` | Run Health Checks (Quiet mode, returns exit code) |
+| `--log` | Append report to `~/sysinfo.log` |
+| `--no-color` | Force disable ANSI colors |
+| `--full` | Run all modules (Default) |
+| `--os` | Show OS & Kernel info |
+| `--cpu` | Show CPU Model, Cores & Load |
+| `--mem` | Show RAM Usage |
+| `--disk` | Show Storage (Smart Filter: Root, Home, Mnt, Media, Docker) |
+| `--net` | Show IP, Interface & Open Ports |
+| `--docker` | Show Docker container stats |
+| `--proc` | Show Top 5 Processes |
+
+* * *
+
+
+📝 Credits
+----------
+
+* **Author:** Engeryu
+* **Concept:** All-in-one System Information solution
+
+* * * * *
+
